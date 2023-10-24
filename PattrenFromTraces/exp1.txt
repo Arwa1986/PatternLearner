@@ -1,0 +1,15 @@
+V0 <V0> depth=0 - L0 -> V1 <V1> depth=1
+V0 <V0> depth=0 - L2 -> V2 <V2> depth=1
+V1 <V1> depth=1 - L1 -> V3 <V3> depth=2
+V2 <V2> depth=1 - L0 -> V1 <V1> depth=1
+V2 <V2> depth=1 - L2 -> V3 <V3> depth=2
+V3 <V3> depth=2 - L0 -> V1 <V1> depth=1
+V3 <V3> depth=2 - L1 -> V0 <V0> depth=0
+Postive sequences
+[L0, L1, L0, L0]
+[L0, L1, L1, L0]
+[L1, L1, L0, L0]
+Negative sequences
+[L0, L1, L0, L1, L2]
+[L0, L1, L1, L0, L1, L1, L0, L2]
+[L0, L1, L1, L0, L1, L1, L1]
