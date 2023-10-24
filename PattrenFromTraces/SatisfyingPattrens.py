@@ -3,7 +3,6 @@ from TemporalPeoperty import TemporalProperty
 import re
 
 properties = []
-# traces = []
 
 def run_(Positive_trace, alphabet):
     while alphabet:
@@ -11,12 +10,11 @@ def run_(Positive_trace, alphabet):
         calculate_satisfactory(event1, event2, Positive_trace)
         calculate_satisfactory(event2, event1, Positive_trace)
 
-
 def pick_random_events(alphabet):
     # Pick a random state from the list
     e1 = random.choice(alphabet)
     alphabet.remove(e1)
-    e2 = random_state = random.choice(alphabet)
+    e2 = random.choice(alphabet)
     alphabet.remove(e2)
     return e1, e2
 
@@ -29,7 +27,6 @@ def calculate_satisfactory(event1, event2, traces):
             properties.append(tp)
         print(f"trace: {trace}")
         tp.print()
-
 
 def discover_pattren(tp, trace):
     cause = tp.event1
