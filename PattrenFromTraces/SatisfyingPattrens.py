@@ -37,10 +37,10 @@ def discover_pattren(tp, trace):
     CauseFirstPattern = f'[^{cause}{effect}]*({cause}[^{effect}]*{effect}[^{cause}]*)+'
     SelfLoop = f'{cause}+'
 
-    if re.fullmatch(OneEffectPattern, trace):
+    if re.findall(OneEffectPattern, trace):
         tp.satisfy_1effect = True
-    if re.fullmatch(OneCausePattern, trace):
+    if re.findall(OneCausePattern, trace):
         tp.satisfy_1cause = True
-    if re.fullmatch(CauseFirstPattern, trace):
+    if re.findall(CauseFirstPattern, trace):
         tp.satisfy_causeFirst = True
     tp.discover_stricest_pattren()
