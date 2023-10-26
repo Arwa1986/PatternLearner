@@ -21,11 +21,11 @@ def import_input(input_file):
 
         if reading_status in  ['positive sequences', 'postive sequences']:
             nodes = [l.strip().upper() for l in line.replace('[','').replace(']','').split(',') if l != ""]
-            nodes = ",".join(nodes)+','
+            # nodes = ",".join(nodes)+','
             accepted.append(nodes)
         elif reading_status == 'negative sequences':
             nodes = [l.strip().upper() for l in line.replace('[','').replace(']','').split(',') if l != ""]
-            nodes = ",".join(nodes) + ','
+            # nodes = " ".join(nodes)
             rejected.append(nodes)
 
 #    build_adjs_matrix('evaluation/exp.txt')

@@ -6,9 +6,13 @@ V2 <V2> depth=1 - L2 -> V3 <V3> depth=2
 V3 <V3> depth=2 - L0 -> V1 <V1> depth=1
 V3 <V3> depth=2 - L1 -> V0 <V0> depth=0
 Postive sequences
-[S, P, S, S]
-[S, P, P, S]
-[P, P, S, S]
+[L0, L1, L1, L0, L1, L2]
+[L0, L0, L2, L2, L0, L2, L1, L2]
+[L0, L2, L1, L1, L1]
+[L3, L1, L0, L1, L0, L1]
+[L0, L0, L0, L2, L2, L2]
+[L1, L1, L2, L0, L0]
+[L0, L1, L0, L0, L1, L1, L2]
 Negative sequences
 [L0, L1, L0, L1, L2]
 [L0, L1, L1, L0, L1, L1, L0, L2]

@@ -1,16 +1,24 @@
 import re
 
-# Your sentence
-sentence = "The quick brown the fox jumps over the lazy dog."
-word='the'
-# Define a regular expression pattern
-pattern = f'{word}[^{word}]'  # This pattern matches three-letter words.
+# # Your sentence
+# sentence = "The quick brown the fox jumps over the lazy dog."
+# word='the'
+# # Define a regular expression pattern
+# pattern = f'{word}[^{word}]'  # This pattern matches three-letter words.
+# # Use re.search() to find words matching the pattern
+# matches = re.findall(pattern, sentence)
+# # Print the matching words
+# print(matches)
 
-# Use re.search() to find words matching the pattern
-matches = re.findall(pattern, sentence)
+trace = 'L0 L1 L1 L1 L0'
+e = 'L1'
+pattern = f'{e}{e}+'
+# f'[^{e}]*({e}{e}+)'
+if re.findall(pattern, trace):
+    print(f'pattern found')
+else:
+    print(f'pattern not found')
 
-# Print the matching words
-print(matches)
 # import re
 # cause = 'Prod'
 # effect = 'S'
