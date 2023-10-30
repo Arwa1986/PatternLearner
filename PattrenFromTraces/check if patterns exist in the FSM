@@ -1,0 +1,10 @@
+after performing a possible merge, check if the merge:
+        -lost one (or more) of the good patterns:
+            meaning, before the merge there was a good merge, but after the merge the pattern was gone
+            if yes, reduce the merging scour
+        - obtains a bad pattern(s):
+            meaning, one of the bad patterns appear in the FSM which wasn't there before
+            if yes, reduce the merging scour
+        - obtains a good pattern(s):
+            meaning, one of the good patterns appear in the FSM which wasn't there before
+            if yes, increase the merging scour
