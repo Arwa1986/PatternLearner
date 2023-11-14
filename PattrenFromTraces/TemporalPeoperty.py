@@ -1,57 +1,33 @@
 class TemporalProperty:
-    def __init__(self, e1, e2):
+    def __init__(self, e1, e2, patrn):
         self.event1 = e1
         self.event2 = e2
-        # self.satisfy_1effect = False
-        # self.satisfy_1cause = False
-        # self.satisfy_causeFirst = False
-        # self.strictest_pattern = ''
-        # self.satisfactory_scour = 0
-
-        self.pattern = ''
+        self.pattern = patrn
         self.counter = 0
-        self.pattern_ratio = 0
-        # self.selfloop_e1_count = 0
-        # self.selfloop_e2_count = 0
 
-    # def getCounter(self, patrn):
-    #     if patrn == 'selfloop_e1':
-    #         return self.selfloop_e1_count
-    #     elif patrn == 'selfloop_e2':
-    #         return self.selfloop_e2_count
-    #
-    # def setCounter(self, patrn, counter):
-    #     if patrn == 'selfloop_e1':
-    #         self.selfloop_e1_count = counter
-    #     elif patrn == 'selfloop_e2':
-    #         self.selfloop_e2_count = counter
-
-
-    def calculate_ratio(self, numberOfTraces):
-            self.pattern_ratio = (self.counter/numberOfTraces)*100
-
-    def discover_stricest_pattren(self):
-        p = ''
-        if self.satisfy_1cause:
-            p = 'OneCause'
-            if self.satisfy_causeFirst:
-                p = 'MultiEffect'
-                if self.satisfy_1effect:
-                    p = 'Alternating'
-            elif self.satisfy_1effect:
-                p = 'EffectFirst'
-        elif self.satisfy_causeFirst:
-                p = 'CauseFirst'
-                if self.satisfy_1effect:
-                    p = 'MultiCause'
-        elif self.satisfy_1effect:
-            p = 'OneEffect'
-        self.strictest_pattern = p
 
     def print(self):
-        print(f'Event1: {self.event1}')
-        print(f'Event2: {self.event2}')
-        # print(f'Pattren: {self.strictest_pattern}')
-        # print(f'scour: {self.satisfactory_scour}')
-        print(f'Pattren: {self.pattern}')
-        print(f'scour: {self.pattern_ratio}')
+        print(f'({self.event1}, {self.event2}) - {self.pattern}: {self.counter} -> {self.get_weigth()}')
+
+    def __eq__(self, other):
+        return self.event1 == other.event1 and self.event2==other.event2 and self.pattern == other.pattern
+
+    def get_length(self):
+        #complex patterns are given higher length
+        pattern_length = 0
+        if self.pattern == 'Selfloop':
+            pattern_length = 1
+        elif self.pattern == 'Alternating':
+            pattern_length = 2
+        elif self.pattern == 'Eventually':
+            pattern_length = 3
+
+        return pattern_length
+
+    def get_weigth(self):
+        # weight a pattern:
+        # the number of times it is satisfied
+        # and multiply it by the 'length' of the pattern
+        # which means that complex patterns that are satisfied would
+        # be given greater weight
+        return self.counter * self.get_length()

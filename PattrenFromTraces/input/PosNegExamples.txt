@@ -1,0 +1,35 @@
+V0 <V0> - L0 -> V2 <V2>
+V0 <V0> - L1 -> V1 <V1>
+V2 <V2> - L0 -> V1 <V1>
+V1 <V1> - L0 -> V3 <V3>
+V1 <V1> - L1 -> V2 <V2>
+V3 <V3> - L0 -> V0 <V0>
+V3 <V3> - L1 -> V3 <V3>
+Postive sequences
+[L1, L0, L0, L1, L1]
+[L1, L0, L0, L0, L0, L1]
+[L1, L0, L1, L1, L1, L1, L1, L1, L0, L1]
+[L1, L0, L1, L0, L0, L0, L1, L0, L1]
+[L1, L1, L0, L1, L0, L1, L0, L0, L0, L0]
+[L1, L1, L0, L1, L0, L0, L0, L0, L0]
+[L1, L1, L0, L0, L0, L1, L0, L0]
+[L0, L0, L1, L0, L0, L1]
+[L0, L0, L0, L1, L1, L1, L0, L1]
+[L0, L0, L0, L1, L0]
+[L0, L0, L0, L0, L0, L0, L1, L0, L1]
+[L0, L0, L0, L0, L1, L1, L0, L1]
+[L0, L0, L0, L0, L1, L0, L0]
+Negative sequences
+[L1, L0, L0, L1, L0, L0, L0, L0, L1, L1]
+[L1, L0, L0, L0, L1]
+[L1, L0, L1, L0, L1, L1, L0, L1, L1]
+[L1, L0, L1, L0, L0, L1]
+[L1, L1, L0, L1, L0, L1, L1]
+[L1, L1, L0, L1, L1]
+[L0, L0, L1, L0, L1, L0, L1, L0, L1, L1]
+[L0, L0, L1, L0, L1, L0, L1, L1]
+[L0, L0, L1, L0, L1, L1]
+[L0, L0, L1, L0, L0, L0, L0, L1]
+[L0, L0, L1, L1]
+[L0, L0, L0, L0, L0, L0, L1, L1]
+[L0, L1]

@@ -21,6 +21,16 @@ class DisjointSet:
         root2 = self.find(element2)
         if root1 != root2:
             self.parent[root2] = root1
+            return True
+        return False
+    def get_set(self, node):
+        #for a given node, return the set that contains this node
+        root = self.find(node)
+        nodes_list=[]
+        for element in self.parent:
+            if root == self.find(element):
+                nodes_list.append(element)
+        return nodes_list
 
     def get_sets(self):
         sets = {}  # Dictionary to store sets and their representatives

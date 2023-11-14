@@ -1,0 +1,82 @@
+import copy
+from random import random
+
+from FSM import FSM
+
+class Evaluation:
+    def __init__(self, fsm:FSM, accepted_traces, rejected_traces):
+        self.G = fsm.apta.G
+        self.apta_obj = fsm.apta
+        self.positive_traces = accepted_traces
+        self.negative_traces = rejected_traces
+        # self.split_dataset(accepted_traces, rejected_traces)
+
+    def is_trace_in_G(self, trace): # trace is a set of strings ['a','a', 'b', 'x']
+        s = self.apta_obj.root
+        for label in trace:
+            if s == -1:
+                break;
+            frm = s
+            s = self.apta_obj.get_successor(s, label)
+
+        if s == -1:
+            # print()
+            print(f'trace is not exist: {trace}')
+            return False, ""
+        else:
+            # print(self.apta_obj.get_state_type(s))
+            return True, self.apta_obj.get_state_type(s)
+
+    def evaluate(self):
+        true_positive =0
+        false_positive = 0
+        true_negative = 0
+        false_negative = 0
+        print(f'Traces that were rejected by original but accepted by learned automata')
+        for trace in self.positive_traces:
+
+            result, lastStateType = self.is_trace_in_G(trace)
+            if result and (lastStateType == "accepted" or lastStateType=="unlabeled") :
+                true_positive +=1
+            else:
+                print(trace)
+                false_positive +=1
+        print(f'Traces that were accepted by original but rejected learned automata')
+        for trace in self.negative_traces:
+            # result = self.is_trace_in_G(trace)
+            result, lastStateType = self.is_trace_in_G(trace)
+            if result and (lastStateType == "accepted" or lastStateType == "unlabeled"):
+                # print(trace)
+                false_negative += 1
+            elif not result or lastStateType=="rejected":
+                true_negative += 1
+
+
+        # print(f'Traces that were accepted by original and learned automata')
+        # print(f'true psitive ={true_positive}')
+        # print(f'Traces that were rejected by original but accepted by learned automata')
+        # print(f'false positive = {false_positive}')
+        # print(f'Traces that were rejected by original and learned automata')
+        # print(f'true negative = {true_negative}')
+        # print(f'Traces that were accepted by original but rejected learned automata')
+        # print(f'false negative = {false_negative}')
+
+        # print(f'number of Positive Examples: {len(self.positive_traces)}')
+        # print(f'number of Negative Examples: {len(self.negative_traces)}')
+        precision = true_positive/(true_positive+false_positive)
+        recall = true_positive/(true_positive+false_negative)
+        print(f'precision = {precision}')
+        print(f'recall = {recall}')
+
+        F_measure = (2*precision*recall)/(precision+recall)
+
+        print(f'F_Measure = {F_measure}')
+
+        # f = open("evaluation/evaluation.txt", "a")
+        # f.write(f"{true_positive}\t{false_positive}\t"
+        #         f"{true_negative}\t{false_negative}\t{precision}\t{recall}\t"
+        #         f"{F_measure}\n")
+        # f.close()
+
+        return precision
+

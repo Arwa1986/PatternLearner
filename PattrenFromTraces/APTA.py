@@ -1,8 +1,8 @@
 from typing import List
 import networkx as nx
-import matplotlib.pyplot as plt
-from IPython.display import Image
-from path import PATH
+# import matplotlib.pyplot as plt
+# from IPython.display import Image
+# from path import PATH
 
 class APTA:
     figure_num = 1
@@ -14,15 +14,17 @@ class APTA:
         # add initial state to the graph G
         self.add_state()
 
-        self.max_loop_iterators = []
-        self.distance_from_root_to_all_nodes = None
+        # self.max_loop_iterators = []
+        # self.distance_from_root_to_all_nodes = None
         self.root = 0
+        self.alphabet = []
 
     def add_edge(self, frm, to, lbl):
-        if lbl in self.max_loop_iterators:
-            self.G.add_edge(frm, to, label=lbl, weight='1')
-        else:
-            self.G.add_edge(frm, to, label=lbl,  weight='1')
+        # discover the alphabet
+        if lbl not in self.alphabet:
+            self.alphabet.append(lbl)
+        # add edge
+        self.G.add_edge(frm, to, label=lbl,  weight='1')
 
     def get_edge_label(self, edge_tuple):
         frm, to, key = edge_tuple[0], edge_tuple[1], edge_tuple[2]
@@ -167,20 +169,20 @@ class APTA:
             d = self.distance_from_root_to_all_nodes[self.root][s]
         return d
 
-    def get_nearset(self, p1:PATH, p2:PATH):
-        first_of_p1 = p1.get_first_state()
-        first_of_p2 = p2.get_first_state()
-        distance_to_p1 = self.get_distance_to(first_of_p1)
-        distance_to_p2 = self.get_distance_to(first_of_p2)
+    # def get_nearset(self, p1:PATH, p2:PATH):
+    #     first_of_p1 = p1.get_first_state()
+    #     first_of_p2 = p2.get_first_state()
+    #     distance_to_p1 = self.get_distance_to(first_of_p1)
+    #     distance_to_p2 = self.get_distance_to(first_of_p2)
+    #
+    #     if distance_to_p1 <= distance_to_p2:
+    #         return p1
+    #     else:
+    #         return p2
 
-        if distance_to_p1 <= distance_to_p2:
-            return p1
-        else:
-            return p2
-
-    def set_distance_to_all_paths(self, list_of_paths:List[PATH]):
-        for p in list_of_paths:
-            p.distance_to_root = self.get_distance_to(p.get_first_state())
+    # def set_distance_to_all_paths(self, list_of_paths:List[PATH]):
+    #     for p in list_of_paths:
+    #         p.distance_to_root = self.get_distance_to(p.get_first_state())
 
     def get_self_loop(self):
         # find and list all the self-loop edges in a graph (self.G)

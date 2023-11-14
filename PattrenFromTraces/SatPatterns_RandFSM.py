@@ -1,18 +1,24 @@
 import random
 from TemporalPeoperty import TemporalProperty
-import re
 
 properties = []
 
-def run_(Positive_traces, alphabet):
+def discover_patterns_fromTraces(Positive_traces, alphabet):
     while alphabet:
         event1, event2 = pick_random_events(alphabet)
-
+        # event1 = 'L0'
+        # event2 = 'L1'
         patterns = ['Selfloop', 'Alternating', 'Eventually']
         for patrn in patterns:
+            # print(f'Pattern: {patrn}')
             calculate_satisfactory(event1, event2, Positive_traces, patrn)
             calculate_satisfactory(event2, event1, Positive_traces, patrn)
+    properties.sort(key=lambda x: x.get_weigth(), reverse=True)
 
+    for tp in properties:
+        tp.print()
+    avgWeigth = get_average_weigth()
+    return properties , avgWeigth
 def pick_random_events(alphabet):
     # Pick a random state from the list
     e1 = random.choice(alphabet)
@@ -22,98 +28,144 @@ def pick_random_events(alphabet):
     return e1, e2
 
 def calculate_satisfactory(event1, event2, traces, patrn):
-    tp = TemporalProperty(event1,event2)
-    tp.pattern = patrn
-    print(f'Pattern: {patrn}')
-    print(f'Satisfied Traces:')
+    tp = TemporalProperty(event1,event2, patrn)
     for trace in traces:
-        if satisfied(tp, trace):
-            tp.counter+=1
-            print(trace)
-    tp.calculate_ratio(len(traces))
-    tp.print()
+        frequent_occurr = calculate_frequent_occurrence(tp, trace)
+        if  frequent_occurr> 0:
+            tp.counter+= frequent_occurr
+    properties.append(tp)
+    # print(f'Total frequent occurrence: {tp.counter}')
 
-def satisfied(tp, trace):
-    satisfied = False
+def calculate_frequent_occurrence(tp, trace):
+    frequent_occurrence = 0
     if tp.pattern == 'Selfloop':
-        satisfied = satisfy_Selfloop(tp.event1, trace)
-    # elif tp.pattern == 'Selfloop_e2':
-    #     satisfied = satisfy_Selfloop(tp.event2, trace)
+        frequent_occurrence = satisfy_Selfloop(tp.event1, trace)
     elif tp.pattern == 'Alternating':
-        satisfied = satisfy_Alternating(tp, trace)
+        frequent_occurrence = satisfy_Alternating(tp.event1, tp.event2, trace)
     elif tp.pattern == 'Eventually':
-        satisfied = satisfy_Alternating(tp, trace)
-    return satisfied
+        frequent_occurrence = satisfy_Eventually(tp.event1, tp.event2, trace)
+
+    return frequent_occurrence
 
 def satisfy_Selfloop(event, trace):
-    listOfEventIndexes = []
-    for i in range(len(trace)):
-        if trace[i] == event:
-            # print(i)
-            listOfEventIndexes.append(i)
-    # print(f'listOfEventIndexes:{listOfEventIndexes}')
+    # return the number of Alternating patterns occurs in one trace
+    # an event must be repeated two or more times to consider an occurrence of pattern
+    # return 0 if pattern is not satisfied by the trace
+    i=0
+    count = 0
+    pattern_counter = 0
+    while i< len(trace):
+        while i < len(trace) and trace[i] == event:
+            count += 1
+            i += 1
+        if count > 1:
+            pattern_counter += 1
+        count = 0
+        i+=1
+    return pattern_counter
 
-    count = 1
-    for i in range(len(listOfEventIndexes) - 1):
-        current_item = listOfEventIndexes[i]
-        next_item = listOfEventIndexes[i + 1]
-
-        if next_item == current_item+1:
-            count+=1
-    if count > 1:
-        return True
-    else:
-        return False
-
-def satisfy_Alternating(tp, trace):
-    event1 = tp.event1
-    event2 = tp.event2
-    satisfied = False
-    listOfEvent1Indexes = []
+def satisfy_Alternating(event1, event2, trace):
+    # return the number of Alternating patterns occurs in one trace
+    # event1 followed by one or more occurrence of event2
+    # return 0 if pattern is not satisfied by the trace
+    count = 0
     for i in range(len(trace)-1):
         if trace[i] == event1 and trace[i+1]==event2:
-            listOfEvent1Indexes.append(i)
-
-    count = 1
-    for i in range(len(listOfEvent1Indexes) - 1):
-        current_item = listOfEvent1Indexes[i]
-        next_item = listOfEvent1Indexes[i + 1]
-
-        if next_item == current_item + 2:
-            count += 1
-    if count > 1:
-        return True
-    else:
-        return False
+            i +=1
+            count+=1
+    return count
 
 def satisfy_Eventually(event1, event2, trace):
-    satisfied = False
+    # return the number of Eventually patterns occurs in one trace
+    # eventually means event1 occurs 1:many times followed by one or more occurrence of event2
+    # return 0 if pattern is not satisfied by the trace
     current_i = 0
-    event1_found = False
-    for i in range(current_i, len(trace)):
-        if trace[i] == event1:
-            event1_found = True
-            current_i = i+1
-            break
-    for i in range(current_i, len(trace)):
-        if trace[i] == event2 and event1_found:
-            satisfied = True
+    event1_counter = 0
+    counter = 0
+    while current_i < len(trace):
+        while  current_i<len(trace) and trace[current_i] == event1:
+                event1_counter += 1
+                current_i +=1
 
-    return satisfied
+        if current_i<len(trace) and trace[current_i] == event2 and event1_counter>1:
+                counter+=1
 
+        current_i += 1
+        event1_counter = 0
 
+    return counter
 
+def get_average_weigth():
+    average_weight = 0
+    total_weigth = 0
+    for p in properties:
+        total_weigth += p.get_weigth()
+    average_weight = total_weigth/len(properties)
+    return average_weight
 if __name__ == '__main__':
     traces = [['L0', 'L1', 'L1', 'L0','L1', 'L2'],
-              ['L0', 'L0', 'L2', 'L2', 'L0', 'L2',   'L1', 'L2'],
-              ['L0', 'L2', 'L1', 'L1', 'L1'],
+              ['L0', 'L0', 'L2', 'L2', 'L0', 'L0', 'L1', 'L2'],
+              ['L0', 'L1', 'L1', 'L1', 'L1'],
               ['L3', 'L1','L0', 'L1', 'L0', 'L1'],
               ['L0', 'L0', 'L0', 'L2', 'L2', 'L2'],
               ['L1', 'L1', 'L2', 'L0', 'L0'],
-              ['L0', 'L1', 'L0', 'L0', 'L1', 'L1', 'L2']]
-    event1 = 'L0'
-    event2 = 'L1'
-    for trace in traces:
-        print(f'Trace: {trace}')
-        print(f'satisfied Alternating pattern for event \' {event1}\' and event\'{event2}\'?'
-              f' {satisfy_Eventually(event1, event2, trace)}')
+              ['L1', 'L0', 'L0', 'L0', 'L1', 'L1', 'L2']]
+    # event1 = 'L0'
+    # event2 = 'L1'
+    # print(f'selfloop pattern\n event1: \' {event1}\'')# and event2:\'{event2}\'')
+    # for trace in traces:
+    #     print(f'Trace: {trace}')
+    #     print(f'pattern found {satisfy_Selfloop(event1, trace)} times')
+    discover_patterns_fromTraces(traces, ['L0', 'L1'])
+
+
+# selfloop pattern
+#  event1: ' L0'
+# Trace: ['L0', 'L1', 'L1', 'L0', 'L1', 'L2']
+# pattern found 0 times
+# Trace: ['L0', 'L0', 'L2', 'L2', 'L0', 'L0', 'L1', 'L2']
+# pattern found 2 times
+# Trace: ['L0', 'L1', 'L1', 'L1', 'L1']
+# pattern found 0 times
+# Trace: ['L3', 'L1', 'L0', 'L1', 'L0', 'L1']
+# pattern found 0 times
+# Trace: ['L0', 'L0', 'L0', 'L2', 'L2', 'L2']
+# pattern found 1 times
+# Trace: ['L1', 'L1', 'L2', 'L0', 'L0']
+# pattern found 1 times
+# Trace: ['L1', 'L0', 'L0', 'L0', 'L1', 'L1', 'L2']
+# pattern found 1 times
+
+# Alternating pattern
+#  event1: ' L0' and event2:'L1'
+# Trace: ['L0', 'L1', 'L1', 'L0', 'L1', 'L2']
+# pattern found 2 times
+# Trace: ['L0', 'L0', 'L2', 'L2', 'L0', 'L0', 'L1', 'L2']
+# pattern found 1 times
+# Trace: ['L0', 'L1', 'L1', 'L1', 'L1']
+# pattern found 1 times
+# Trace: ['L3', 'L1', 'L0', 'L1', 'L0', 'L1']
+# pattern found 2 times
+# Trace: ['L0', 'L0', 'L0', 'L2', 'L2', 'L2']
+# pattern found 0 times
+# Trace: ['L1', 'L1', 'L2', 'L0', 'L0']
+# pattern found 0 times
+# Trace: ['L1', 'L0', 'L0', 'L0', 'L1', 'L1', 'L2']
+# pattern found 1 times
+
+# Eventually pattern
+#  event1: ' L0' and event2:'L1'
+# Trace: ['L0', 'L1', 'L1', 'L0', 'L1', 'L2']
+# pattern found 2 times
+# Trace: ['L0', 'L0', 'L2', 'L2', 'L0', 'L0', 'L1', 'L2']
+# pattern found 1 times
+# Trace: ['L0', 'L1', 'L1', 'L1', 'L1']
+# pattern found 1 times
+# Trace: ['L3', 'L1', 'L0', 'L1', 'L0', 'L1']
+# pattern found 2 times
+# Trace: ['L0', 'L0', 'L0', 'L2', 'L2', 'L2']
+# pattern found 0 times
+# Trace: ['L1', 'L1', 'L2', 'L0', 'L0']
+# pattern found 0 times
+# Trace: ['L1', 'L0', 'L0', 'L0', 'L1', 'L1', 'L2']
+# pattern found 1 times
