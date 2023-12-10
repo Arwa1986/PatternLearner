@@ -31,26 +31,6 @@ def import_input(input_file):
 #    build_adjs_matrix('evaluation/exp.txt')
     return accepted, rejected
 
-def build_adjs_matrix(input_file):
-    # open original file
-    input = [l.strip().lower() for l in open(input_file).readlines()]
-
-    # create file named "matrixOfRefrencedAuotmata.adjlist"
-    # W: will overwirte any previous contents
-    f = open("test_cases\matrixOfRefrencedAuotmata.adjlist", "w")
-
-    for line in input:
-        if not line or line.strip().startswith("#") or line.strip() == '':
-            continue
-        elif line in ['postive sequences', 'positive sequences', 'negative sequences']:
-            break
-
-        list = [l.strip().upper() for l in line.replace(' - ',',').replace(' -> ',',').split(',') if l != ""]
-        row = list[0] + ' ' +list[2] + ' ' + list[1] +'\n'
-        f.write(row)
-
-    f.close()
-
 
 def clean_folder():
     folder = 'output'
@@ -71,5 +51,5 @@ if __name__ == '__main__':
     print('accepted', accepted)
     print('rejected', rejected )
 
-    # build_adjs_matrix('adjMatrix.txt')
+
 

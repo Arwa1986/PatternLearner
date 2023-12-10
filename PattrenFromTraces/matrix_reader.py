@@ -18,12 +18,14 @@ def read_matrix(fname):
     # print('start')
     G = nx.MultiDiGraph()
     f = open(fname)
-
+    alphabet = []
     for line in f.readlines():
         color = ''
         shape = 'oval'
         x = line.split()
-        frm, to, lbl = eval(x[0]), eval(x[1]), x[2]
+        frm, to, lbl = x[0], x[1], x[2]
+        if lbl not in alphabet:
+            alphabet.append(lbl)
         if len(x)==4:
             if    x[3] == 'rejected':
                 color = '#FA7E7E'
@@ -48,7 +50,7 @@ def read_matrix(fname):
     f.close()
 
     # print('done')
-    return G
+    return G, alphabet
 
 
 
@@ -61,5 +63,6 @@ if __name__ == '__main__':
     # clean_folder()
 
     #test_solve determinism
-    G = read_matrix('TestCases/findAlternatingInG/FSM.adjlist')
+    G, alphabet = read_matrix('TestCases/findAlternatingInG/FSM.adjlist')
+    print(f'Alphabet: {alphabet}')
     draw(G, "TestCases/findAlternatingInG/expected_graph/targetFSM.png")

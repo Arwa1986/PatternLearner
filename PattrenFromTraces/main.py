@@ -2,7 +2,6 @@ from APTA import APTA
 from FSM import FSM
 from PattrenFromTraces.SatPatterns_RandFSM import discover_patterns_fromTraces
 from PattrenFromTraces.evaluation import Evaluation
-# from evaluation import Evaluation
 from input_reader2 import import_input, clean_folder
 
 if __name__ == '__main__':
