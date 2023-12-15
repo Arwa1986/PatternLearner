@@ -23,7 +23,8 @@ def read_matrix(fname):
         color = ''
         shape = 'oval'
         x = line.split()
-        frm, to, lbl = eval(x[0]), eval(x[1]), x[2]
+        frm, to, lbl = x[0], x[1], x[2]
+
         if len(x)==4:
             if    x[3] == 'rejected':
                 color = '#FA7E7E'
@@ -51,6 +52,63 @@ def read_matrix(fname):
     return G
 
 
+def read_matrix2(fname):
+    # print('start')
+    G = nx.MultiDiGraph()
+    f = open(fname)
+    alphabet = []
+    for line in f.readlines():
+        color = ''
+        shape = 'oval'
+        x = line.split()
+        frm, to, lbl = x[0], x[1], x[2]
+
+        if lbl not in alphabet:
+            alphabet.append(lbl)
+
+        if len(x) == 4:
+            if x[3] == 'rejected':
+                color = '#FA7E7E'
+                ntype = 'rejected'
+                shape = 'square'
+            elif x[3] == 'accepted':
+                color = 'lightblue'
+                ntype = 'accepted'
+                shape = 'doublecircle'
+            else:
+                color = 'white'
+                ntype = 'unlabeled'
+                shape = 'oval'
+
+        ntype = 'unlabeled' if len(x) == 3 else x[3]
+        G.add_node(frm, label=frm)
+        # G.add_node(to, label=to)
+        G.add_node(to, label=to, type=ntype, style='filled', fillcolor=color, shape=shape)
+        G.add_edge(frm, to, label=lbl, weight='1')
+        # print(frm, to, lbl)
+
+    f.close()
+    return G, alphabet
+
+def build_adjs_matrix(input_file):
+    # open original file
+    input = [l.strip().lower() for l in open(input_file).readlines()]
+
+    # create file named "matrixOfRefrencedAuotmata.adjlist"
+    # W: will overwirte any previous contents
+    f = open("input/matrixOfRefrencedAuotmata.adjlist", "w")
+
+    for line in input:
+        if not line or line.strip().startswith("#") or line.strip() == '':
+            continue
+        elif line in ['postive sequences', 'positive sequences', 'negative sequences', 'numbre of transitions:']:
+            break
+
+        list = [l.strip().upper() for l in line.replace(' - ',',').replace(' -> ',',').split(',') if l != ""]
+        row = list[0].split('<', 1)[0] + ' ' +list[2].split('<', 1)[0] + ' ' + list[1] +'\n'
+        f.write(row)
+
+    f.close()
 
 def draw(G, filename):
     p = nx.drawing.nx_pydot.to_pydot(G)
@@ -59,7 +117,7 @@ def draw(G, filename):
 
 if __name__ == '__main__':
     # clean_folder()
-
+    build_adjs_matrix('input/PosNegExamples.txt')
     #test_solve determinism
-    G = read_matrix('TestCases/findAlternatingInG/FSM.adjlist')
-    draw(G, "TestCases/findAlternatingInG/expected_graph/targetFSM.png")
+    G = read_matrix('input/matrixOfRefrencedAuotmata.adjlist')
+    draw(G, "output/RefrencedAuotmata.png")
