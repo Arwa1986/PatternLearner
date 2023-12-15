@@ -5,11 +5,11 @@ import networkx as nx
 from APTA import APTA
 from PattrenFromTraces.Merger import *
 from PattrenFromTraces.PatternsChecker import *
-
+from PattrenFromTraces.negative_patterns2 import *
 
 class FSM:
     figure_num = 2
-    def __init__(self, apta:APTA, all_properties, avgScour):
+    def __init__(self, apta:APTA, all_properties, avgScour, reference_DFA):
         self.apta = apta
         self.all_properties = all_properties
         self.properties_average_scour = avgScour
@@ -20,6 +20,7 @@ class FSM:
         self.visited=[]
         self.blue_states=[]
 
+        self.negative_patterns = get_negative_patterns(reference_DFA)
     def run_EDSM_learner(self):
         if self.apta.is_all_states_red():
             return
@@ -42,36 +43,46 @@ class FSM:
                 ds.s2 = blue
                 self.make_set_for_every_state_rooted_at(ds, red)
                 self.make_set_for_every_state_rooted_at(ds, blue)
-
-                have_shared_transition, shared_labels = self.have_shared_outgoing_transition(red, blue)
                 work_to_do = {}
-                if have_shared_transition:
-                    add_new_state = ds.union(red, blue)
-                    work_to_do[ds.find(red)] = ds.get_set(red)
-                    if add_new_state:
-                        self.compute_classes2(ds,work_to_do)
+                _a = ds.union(red, blue)
+                work_to_do[ds.find(red)] = ds.get_set(red)
+                self.compute_classes2(ds, work_to_do)
+                # have_shared_transition, shared_labels = self.have_shared_outgoing_transition(red, blue)
+                # work_to_do = {}
+                # if have_shared_transition:
+                #     add_new_state = ds.union(red, blue)
+                #     work_to_do[ds.find(red)] = ds.get_set(red)
+                #     if add_new_state:
+                #         self.compute_classes2(ds,work_to_do)
 
                 if is_valid_merge(self.apta, ds):
+                    # merging_scour = self.compute_scour_with_negative_patterns(ds)
                     merging_scour = self.compute_scour(ds)
                     ds.merging_scour = merging_scour
-                    mergable_states.append(ds)
-                    if merging_scour > 0:
-                        # ds.print()
+                    if merging_scour > -1 :
+                        mergable_states.append(ds)
+                        # ds.printSets()
                         valid_for_at_least_one_red = True
-                    # print(f'merging scour for {red} & {blue}: {merging_scour}')
+                        print(f'Valid merge: scour for {red} & {blue}: {merging_scour}')
+                    # else:
+                    #     print(f'Valid but incorrect merge: scour for {red} & {blue}: {merging_scour}')
                 else:
                     ds.merging_scour = -1
-                    # ds.print()
+                    print(f'InValid merge: scour for {red} & {blue}: {ds.merging_scour}')
 
         if not valid_for_at_least_one_red:
-             # the blue_state can't be merged with any red_state
+            # the blue_state can't be merged with any red_state
             # print(f'{blue} cannot be merged with any red_state')
             self.apta.set_color(blue, 'red') # make it red
             self.red_states.append(blue) #addit to red_states list
             self.draw()
         else:
+            print(f'mergable_states:')
+            for ds in mergable_states:
+                ds.printInitialStatesAndScore()
             ds_with_highest_scour = self.pick_high_scour_pair(mergable_states)
-            # print(f'{ds_with_highest_scour.s1} & {ds_with_highest_scour.s2} has the highest scour : {ds_with_highest_scour.merging_scour}')
+            print(f'{ds_with_highest_scour.s1} & {ds_with_highest_scour.s2} has the highest scour : {ds_with_highest_scour.merging_scour}')
+            print(f'____________________________________________________________')
             merge_sets(ds_with_highest_scour, self.apta)
             self.draw()
 
@@ -136,6 +147,21 @@ class FSM:
     def compute_scour(self, ds):
         merging_scour = 0
         states_before_merge = self.apta.G.number_of_nodes()
+        backup = copy.deepcopy(self.apta)
+        merge_sets(ds, self.apta)
+        states_after_merge = self.apta.G.number_of_nodes()
+        if states_before_merge != states_after_merge:
+            merging_scour = states_before_merge - states_after_merge - 1
+        if has_negative_patterns(self.apta, self.negative_patterns):
+            print(f'Valid but incorrect merge: scour for {ds.s1} & {ds.s2}: {ds.merging_scour}')
+            merging_scour = -2
+        self.apta = backup
+
+        return merging_scour
+
+    def compute_scour_with_positive_patterns(self, ds):
+        merging_scour = 0
+        states_before_merge = self.apta.G.number_of_nodes()
         properties_before_merge= getProperties(self.apta, self.all_properties)
         backup = copy.deepcopy(self.apta)
         merge_sets(ds, self.apta)
@@ -145,6 +171,21 @@ class FSM:
         self.apta = backup
         if states_before_merge != states_after_merge:
             merging_scour = (states_before_merge - states_after_merge -1)+properties_scour
+            # merging_scour = states_before_merge - states_after_merge - 1
+        return merging_scour
+
+    def compute_scour_with_negative_patterns(self, ds):
+        merging_scour = 0
+        states_before_merge = self.apta.G.number_of_nodes()
+        # properties_before_merge= getProperties(self.apta, self.all_properties)
+        backup = copy.deepcopy(self.apta)
+        merge_sets(ds, self.apta)
+        states_after_merge = self.apta.G.number_of_nodes()
+        negPatterns_score= get_score_for_negative_patterns_in_hypo_automta(self.apta, self.negative_patterns)
+        # properties_scour = calculate_properties_scour(properties_before_merge, properties_after_merge, self.properties_average_scour)
+        self.apta = backup
+        if states_before_merge != states_after_merge:
+            merging_scour = (states_before_merge - states_after_merge -1)+negPatterns_score
             # merging_scour = states_before_merge - states_after_merge - 1
         return merging_scour
 
