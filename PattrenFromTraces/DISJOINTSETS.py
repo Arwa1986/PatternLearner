@@ -49,7 +49,10 @@ class DisjointSet:
         else:
             return False
 
-    def print(self):
+    def printSets(self):
         all_sets = self.get_sets()
         for representative, elements in all_sets.items():
             print(f"Set with representative {representative}: {elements}")
+
+    def printInitialStatesAndScore(self):
+        print(f'{self.s1} & {self.s2} ==> {self.merging_scour}')
