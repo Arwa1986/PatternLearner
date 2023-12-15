@@ -40,14 +40,14 @@ class Evaluation:
                 true_positive +=1
             else:
                 print(trace)
-                false_positive +=1
+                false_negative +=1
         print(f'Traces that were accepted by original but rejected learned automata')
         for trace in self.negative_traces:
             # result = self.is_trace_in_G(trace)
             result, lastStateType = self.is_trace_in_G(trace)
             if result and (lastStateType == "accepted" or lastStateType == "unlabeled"):
                 # print(trace)
-                false_negative += 1
+                false_positive += 1
             elif not result or lastStateType=="rejected":
                 true_negative += 1
 
@@ -69,9 +69,10 @@ class Evaluation:
         print(f'recall = {recall}')
 
         F_measure = (2*precision*recall)/(precision+recall)
-
         print(f'F_Measure = {F_measure}')
 
+        Accuracy = (true_positive+true_negative)/(len(self.positive_traces)+ len(self.negative_traces))
+        print(f'Accuracy = {Accuracy}')
         # f = open("evaluation/evaluation.txt", "a")
         # f.write(f"{true_positive}\t{false_positive}\t"
         #         f"{true_negative}\t{false_negative}\t{precision}\t{recall}\t"
