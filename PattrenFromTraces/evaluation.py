@@ -32,7 +32,7 @@ class Evaluation:
         false_positive = 0
         true_negative = 0
         false_negative = 0
-        print(f'Traces that were rejected by original but accepted by learned automata')
+        print(f'Traces that were accepted by original but rejected by learned automata')
         for trace in self.positive_traces:
 
             result, lastStateType = self.is_trace_in_G(trace)
@@ -40,26 +40,28 @@ class Evaluation:
                 true_positive +=1
             else:
                 print(trace)
-                false_negative +=1
-        print(f'Traces that were accepted by original but rejected learned automata')
+                false_positive +=1
+
+        print(f'Traces that were rejected by original but accepted learned automata')
         for trace in self.negative_traces:
             # result = self.is_trace_in_G(trace)
             result, lastStateType = self.is_trace_in_G(trace)
             if result and (lastStateType == "accepted" or lastStateType == "unlabeled"):
-                # print(trace)
-                false_positive += 1
+                print(trace)
+                false_negative += 1
             elif not result or lastStateType=="rejected":
                 true_negative += 1
 
 
-        # print(f'Traces that were accepted by original and learned automata')
-        # print(f'true psitive ={true_positive}')
-        # print(f'Traces that were rejected by original but accepted by learned automata')
-        # print(f'false positive = {false_positive}')
-        # print(f'Traces that were rejected by original and learned automata')
-        # print(f'true negative = {true_negative}')
-        # print(f'Traces that were accepted by original but rejected learned automata')
-        # print(f'false negative = {false_negative}')
+        print(f'Traces that were accepted by original and learned automata')
+        print(f'true psitive ={true_positive}')
+        print(f'Traces that were accepted by original but rejected learned automata')
+        print(f'false negative = {false_negative}')
+        print(f'Traces that were rejected by original but accepted by learned automata')
+        print(f'false positive = {false_positive}')
+        print(f'Traces that were rejected by original and learned automata')
+        print(f'true negative = {true_negative}')
+
 
         # print(f'number of Positive Examples: {len(self.positive_traces)}')
         # print(f'number of Negative Examples: {len(self.negative_traces)}')
