@@ -32,39 +32,47 @@ class Evaluation:
         false_positive = 0
         true_negative = 0
         false_negative = 0
-        print(f'Traces that were accepted by original but rejected by learned automata')
+
+        true_positive_lsit = []
+        false_positive_list = []
+        true_negative_list = []
+        false_negative_list = []
         for trace in self.positive_traces:
-
+            # print(trace)
             result, lastStateType = self.is_trace_in_G(trace)
-            if result and (lastStateType == "accepted" or lastStateType=="unlabeled") :
+            if result and (lastStateType == "accepted" or lastStateType == "unlabeled") :
                 true_positive +=1
+                true_positive_lsit.append(trace)
             else:
-                print(trace)
-                false_positive +=1
+                false_negative +=1
+                false_negative_list.append(trace)
 
-        print(f'Traces that were rejected by original but accepted learned automata')
         for trace in self.negative_traces:
+            # print(trace)
             # result = self.is_trace_in_G(trace)
             result, lastStateType = self.is_trace_in_G(trace)
             if result and (lastStateType == "accepted" or lastStateType == "unlabeled"):
-                print(trace)
-                false_negative += 1
+                false_positive += 1
+                false_positive_list.append(trace)
             elif not result or lastStateType=="rejected":
                 true_negative += 1
+                true_negative_list.append(trace)
 
 
         print(f'Traces that were accepted by original and learned automata')
         print(f'true psitive ={true_positive}')
-        print(f'Traces that were accepted by original but rejected learned automata')
-        print(f'false negative = {false_negative}')
+        self.print_lst(true_positive_lsit)
         print(f'Traces that were rejected by original but accepted by learned automata')
         print(f'false positive = {false_positive}')
+        self.print_lst(false_positive_list)
         print(f'Traces that were rejected by original and learned automata')
         print(f'true negative = {true_negative}')
+        self.print_lst(true_negative_list)
+        print(f'Traces that were accepted by original but rejected learned automata')
+        print(f'false negative = {false_negative}')
+        self.print_lst(false_negative_list)
 
 
-        # print(f'number of Positive Examples: {len(self.positive_traces)}')
-        # print(f'number of Negative Examples: {len(self.negative_traces)}')
         precision = true_positive/(true_positive+false_positive)
         recall = true_positive/(true_positive+false_negative)
         print(f'precision = {precision}')
@@ -73,8 +81,9 @@ class Evaluation:
         F_measure = (2*precision*recall)/(precision+recall)
         print(f'F_Measure = {F_measure}')
 
-        Accuracy = (true_positive+true_negative)/(len(self.positive_traces)+ len(self.negative_traces))
+        Accuracy = (true_positive + true_negative) / (len(self.positive_traces) + len(self.negative_traces))
         print(f'Accuracy = {Accuracy}')
+
         # f = open("evaluation/evaluation.txt", "a")
         # f.write(f"{true_positive}\t{false_positive}\t"
         #         f"{true_negative}\t{false_negative}\t{precision}\t{recall}\t"
@@ -83,3 +92,6 @@ class Evaluation:
 
         return precision
 
+    def print_lst(self, lst):
+        for item in lst:
+            print(item)
