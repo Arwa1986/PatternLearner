@@ -4,21 +4,33 @@ from TemporalPeoperty import TemporalProperty
 properties = []
 
 def discover_patterns_fromTraces(Positive_traces, alphabet):
-    while alphabet:
-        event1, event2 = pick_random_events(alphabet)
-        # event1 = 'L0'
-        # event2 = 'L1'
-        patterns = ['Selfloop', 'Alternating', 'Eventually']
+    for char in alphabet:
+        calculate_satisfactory(char, '', Positive_traces, 'Selfloop')
+    events_pairs = get_events_pairs(alphabet)
+    print(f'Events Pairs: {events_pairs}')
+    for pair in events_pairs:
+        event1 = pair[0]
+        event2 = pair[1]
+        patterns = ['Alternating', 'Eventually']
         for patrn in patterns:
-            # print(f'Pattern: {patrn}')
             calculate_satisfactory(event1, event2, Positive_traces, patrn)
-            calculate_satisfactory(event2, event1, Positive_traces, patrn)
+            # calculate_satisfactory(event2, event1, Positive_traces, patrn)
+
     properties.sort(key=lambda x: x.get_weigth(), reverse=True)
 
     for tp in properties:
         tp.print()
     avgWeigth = get_average_weigth()
     return properties , avgWeigth
+def get_events_pairs(alphabet):
+    events_pairs=[]
+    for i in  range(len(alphabet)-1):
+        for j in range(i+1, len(alphabet)):
+            event1 = alphabet[i]
+            event2 = alphabet[j]
+            events_pairs.append([event1, event2])
+    return events_pairs
+
 def pick_random_events(alphabet):
     # Pick a random state from the list
     e1 = random.choice(alphabet)

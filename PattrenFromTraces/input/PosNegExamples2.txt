@@ -1,0 +1,14 @@
+S0 <V0> - a -> S2 <V2> accepted
+S0 <V0> - b -> S1 <V1> accepted
+S2 <V2> - a -> S1 <V1> accepted
+S1 <V1> - a -> S1 <V3> accepted
+S1 <V1> - b -> S2 <V2> accepted
+
+Postive sequences
+[a, a, b]
+[b, a, a]
+[b, b, a]
+Negative sequences
+[a, a, b, b]
+[a, b]
+[b, b, b]

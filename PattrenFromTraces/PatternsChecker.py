@@ -1,4 +1,4 @@
-from APTA import APTA
+from PattrenFromTraces.APTA import APTA
 from PattrenFromTraces.TemporalPeoperty import TemporalProperty
 from PattrenFromTraces.matrix_reader import *
 
@@ -11,6 +11,19 @@ def has_selfloop(apta, label):
         else:
             found =  False
     return found
+
+def get_negative_selfloop(DFA, label):
+    # list of states' number in which a negative patterns occurs
+    # states_with_selfloop = [node for node in DFA.G.nodes() if
+    #                         DFA.G.has_edge(node, node) and DFA.G[node][node].get('label') == label]
+    # return states_with_selfloop
+    selfloops = DFA.get_self_loop()
+    states_with_selfloop = []
+    for sl in selfloops:
+        if sl[-1] == label:
+            states_with_selfloop.append(sl[0])
+    return states_with_selfloop
+
 def has_Alternating(apta:APTA, event1, event2):
     found=False
     all_event1_edges = get_edges_with_label(apta.G, event1)
@@ -22,6 +35,19 @@ def has_Alternating(apta:APTA, event1, event2):
             if event1_edge[0] == event2_edge[1] and event1_edge[1] == event2_edge[0]:
                 found=True
     return found
+def get_negative_alternating(DFA, event1, event2):
+    alternating_pairs=[]
+    all_event1_edges = get_edges_with_label(DFA.G, event1)
+    all_event2_edges = get_edges_with_label(DFA.G, event2)
+    for event1_edge in all_event1_edges:
+        for event2_edge in all_event2_edges:
+            # if event1's source is the target for event2
+            # and event1#s target is the source of event2
+            if event1_edge[0] == event2_edge[1] and event1_edge[1] == event2_edge[0]:
+                alternating_pairs.append([event1_edge[0], event1_edge[1]])
+
+    return alternating_pairs
+
 
 def get_edges_with_label(graph, label):
     edges = [edge for edge in graph.edges(data=True) if edge[2].get('label') == label]

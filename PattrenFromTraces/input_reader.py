@@ -32,6 +32,8 @@ def import_input(input_file):
     return accepted, rejected
 
 
+
+
 def clean_folder():
     folder = 'output'
     for filename in os.listdir(folder):
