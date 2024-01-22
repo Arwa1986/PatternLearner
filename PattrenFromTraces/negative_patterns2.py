@@ -16,7 +16,7 @@ def get_negative_patterns(apta_obj):
             event1 = alphabet[i]
             event2 = alphabet[j]
             # alphabet, event1, even2 = pick_random_events(alphabet)
-            if not has_Alternating(apta_obj, event1, event2):
+            if not has_Alternating(apta_obj, event1, event2, []):
                 tp = TemporalProperty(event1, event2, 'Alternating')
                 negative_patterns.append(tp)
 
@@ -43,8 +43,8 @@ def get_score_for_negative_patterns_in_hypo_automta(hypo_apta, negative_patterns
         #     score -= 3
     return score
 
-def has_negative_patterns(hypo_apta, negative_patterns):
-    print(f'Negative Patterns found in Hypothesis DFA: ')
+def has_negative_patterns(hypo_apta, negative_patterns, statesOfInterest):
+    # print(f'Negative Patterns found in Hypothesis DFA: ')
     found_negative_patterns=False
     for tp in negative_patterns:
         if tp.pattern == 'Selfloop':
@@ -53,7 +53,7 @@ def has_negative_patterns(hypo_apta, negative_patterns):
                 found_negative_patterns = True
                 # locations_neg_selfloop= get_negative_selfloop(hypo_apta, tp.event1)
         elif tp.pattern == 'Alternating':
-            if has_Alternating(hypo_apta, tp.event1, tp.event2):
+            if has_Alternating(hypo_apta, tp.event1, tp.event2, statesOfInterest):
                 tp.print()
                 found_negative_patterns= True
         # elif tp.pattern == 'Eventually':
