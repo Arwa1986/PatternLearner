@@ -30,7 +30,7 @@ class FSM:
         self.visited = []
         self.pick_next_blue2(self.apta.root)
         # print(f'BLUE_STATES: {self.blue_states}')
-        self.draw()
+        # self.draw()
         # mergable_states is  a list contains all pairs of state that are valid to be merged with their merging scour
         mergable_states=[]
         valid_for_at_least_one_red = False
@@ -68,18 +68,18 @@ class FSM:
                     #     print(f'Valid but incorrect merge: scour for {red} & {blue}: {merging_scour}')
                 else:
                     ds.merging_scour = -1
-                    print(f'InValid merge: scour for {red} & {blue}: {ds.merging_scour}')
+                    # print(f'InValid merge: scour for {red} & {blue}: {ds.merging_scour}')
 
         if not valid_for_at_least_one_red:
             # the blue_state can't be merged with any red_state
             # print(f'{blue} cannot be merged with any red_state')
             self.apta.set_color(blue, 'red') # make it red
             self.red_states.append(blue) #addit to red_states list
-            self.draw()
+            # self.draw()
         else:
-            print(f'mergable_states:')
-            for ds in mergable_states:
-                ds.printInitialStatesAndScore()
+            # print(f'mergable_states:')
+            # for ds in mergable_states:
+            #     ds.printInitialStatesAndScore()
             ds_with_highest_scour = self.pick_high_scour_pair(mergable_states)
             print(f'{ds_with_highest_scour.s1} & {ds_with_highest_scour.s2} has the highest scour : {ds_with_highest_scour.merging_scour}')
             print(f'____________________________________________________________')
@@ -146,16 +146,34 @@ class FSM:
 
     def compute_scour(self, ds):
         merging_scour = 0
-        states_before_merge = self.apta.G.number_of_nodes()
-        backup = copy.deepcopy(self.apta)
-        merge_sets(ds, self.apta)
-        states_after_merge = self.apta.G.number_of_nodes()
-        if states_before_merge != states_after_merge:
-            merging_scour = states_before_merge - states_after_merge - 1
-        if has_negative_patterns(self.apta, self.negative_patterns):
-            print(f'Valid but incorrect merge: scour for {ds.s1} & {ds.s2}: {ds.merging_scour}')
-            merging_scour = -2
-        self.apta = backup
+        # states_before_merge = self.apta.G.number_of_nodes()
+        # backup = copy.deepcopy(self.apta)
+        # merge_sets(ds, self.apta)
+        # states_after_merge = self.apta.G.number_of_nodes()
+        # if states_before_merge != states_after_merge:
+        #     merging_scour = states_before_merge - states_after_merge - 1
+        # if has_negative_patterns(self.apta, self.negative_patterns, ds):
+        #     print(f'Valid but incorrect merge: scour for {ds.s1} & {ds.s2}: {ds.merging_scour}')
+        #     merging_scour = -2
+        # self.apta = backup
+        all_sets = ds.get_sets()
+        # statesOfInterest=[]
+        for representative, elements in all_sets.items():
+            if len(elements) > 1:
+                # statesOfInterest.append(representative)
+                merging_scour += (len(elements) - 1)
+        if merging_scour > -1:
+            backup = copy.deepcopy(self.apta)
+            merge_sets(ds, self.apta)
+            # considering the new hypothesis
+            statesOfInterest = []
+            for state in self.apta.G.nodes:
+                if self.apta.is_red(state):
+                    statesOfInterest.append(state)
+            if has_negative_patterns(self.apta, self.negative_patterns, statesOfInterest):
+                print(f'Valid but incorrect merge: scour for {ds.s1} & {ds.s2}: {ds.merging_scour}')
+                merging_scour = -2
+            self.apta = backup
 
         return merging_scour
 
@@ -199,6 +217,7 @@ class FSM:
         return ds_with_highest_scour
 
     def draw(self):
+        self.apta.G.nodes[self.apta.root]['color'] = 'green'
         p = nx.nx_agraph.pygraphviz_layout(self.apta.G, prog='dot')
         p = nx.drawing.nx_pydot.to_pydot(self.apta.G)
         p.write_png(f'output/figure{FSM.figure_num:02d}.png')

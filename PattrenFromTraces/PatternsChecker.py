@@ -24,10 +24,10 @@ def get_negative_selfloop(DFA, label):
             states_with_selfloop.append(sl[0])
     return states_with_selfloop
 
-def has_Alternating(apta:APTA, event1, event2):
+def has_Alternating(apta:APTA, event1, event2, statesOfInterest):
     found=False
-    all_event1_edges = get_edges_with_label(apta.G, event1)
-    all_event2_edges = get_edges_with_label(apta.G, event2)
+    all_event1_edges = get_edges_with_label2(apta.G, event1, statesOfInterest)
+    all_event2_edges = get_edges_with_label2(apta.G, event2, statesOfInterest)
     for event1_edge in all_event1_edges:
         for event2_edge in all_event2_edges:
             #if event1's source is the target for event2
@@ -51,6 +51,15 @@ def get_negative_alternating(DFA, event1, event2):
 
 def get_edges_with_label(graph, label):
     edges = [edge for edge in graph.edges(data=True) if edge[2].get('label') == label]
+    return edges
+
+def get_edges_with_label2(graph, label, statesOfInterset):
+    if statesOfInterset:
+        # get all out_edges with a specific label for every item in statesOfInterset
+        edges = [edge for edge in graph.out_edges(statesOfInterset, data='label') if edge[2]==label]
+    else:
+        # get all out_edges with a specific label for all states in the graph
+        edges = [edge for edge in graph.out_edges(data='label') if edge[2] == label]
     return edges
 
 def has_Eventually(apta, event1, event2):

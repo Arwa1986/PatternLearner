@@ -8,7 +8,7 @@ from input_reader2 import import_input, clean_folder
 # from input_reader import *
 from PattrenFromTraces.matrix_reader import *
 def get_reference_DFA():
-    build_adjs_matrix('input/PosNegExamples2.txt')
+    build_adjs_matrix('input/PosNegExamples.txt')
     G, alphabet = read_matrix2('input/matrixOfRefrencedAuotmata.adjlist')
     draw(G, "output/RefrencedAuotmata.png")
 
@@ -33,16 +33,17 @@ if __name__ == '__main__':
     # apta.draw_multiDigraph()
     apta.build_APTA(traningPosExmp, trainingNegExmp)
     # LabeledAPTA = APTA2(reference_DFA)
-    # LabeledAPTA.build_APTA(accepted_traces, rejected_traces)
+    # # LabeledAPTA.build_APTA(accepted_traces, rejected_traces)
     # LabeledAPTA.build_APTA(traningPosExmp, trainingNegExmp)
     # LabeledAPTA.draw_multiDigraph()
 
-    alphabet = apta.alphabet
-    print(f'Alphabet: {alphabet}')
-    extraced_properties, average_weigth = discover_patterns_fromTraces(traningPosExmp, alphabet)
+    # alphabet = apta.alphabet
+    # print(f'Alphabet: {alphabet}')
+    # extraced_properties, average_weigth = discover_patterns_fromTraces(traningPosExmp, alphabet)
     # extraced_properties, average_weigth = discover_patterns_fromTraces(accepted_traces, alphabet)
 
-    fsm = FSM(apta, extraced_properties, average_weigth, reference_DFA)
+    # fsm = FSM(apta, extraced_properties, average_weigth, reference_DFA)
+    fsm = FSM(apta, [], 0, reference_DFA)
     fsm.run_EDSM_learner()
 
     print(f'...............EVALUATION................')
@@ -50,4 +51,4 @@ if __name__ == '__main__':
     print(f'number of Negative Examples: {len(evalNegExamp)}')
     eval = Evaluation(fsm, evalPosExmp, evalNegExamp)
     eval.evaluate()
-    print(f'Root: {fsm.apta.root}')
+    print(f'root: {fsm.apta.root}')
