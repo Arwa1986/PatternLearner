@@ -157,15 +157,19 @@ class FSM:
         #     merging_scour = -2
         # self.apta = backup
         all_sets = ds.get_sets()
-        statesOfInterest=[]
+        # statesOfInterest=[]
         for representative, elements in all_sets.items():
             if len(elements) > 1:
-                statesOfInterest.append(representative)
+                # statesOfInterest.append(representative)
                 merging_scour += (len(elements) - 1)
         if merging_scour > -1:
             backup = copy.deepcopy(self.apta)
             merge_sets(ds, self.apta)
-
+            # considering the new hypothesis
+            statesOfInterest = []
+            for state in self.apta.G.nodes:
+                if self.apta.is_red(state):
+                    statesOfInterest.append(state)
             if has_negative_patterns(self.apta, self.negative_patterns, statesOfInterest):
                 print(f'Valid but incorrect merge: scour for {ds.s1} & {ds.s2}: {ds.merging_scour}')
                 merging_scour = -2
