@@ -31,7 +31,38 @@ def import_input(input_file):
 #    build_adjs_matrix('evaluation/exp.txt')
     return accepted, rejected
 
+def GetTrainingEvaluationData(input_file):
+    trainingPositive = []
+    trainingNegative = []
+    evaluationPositive = []
+    evaluationNegative = []
+    reading_status = ''
 
+    input = [l.strip().lower() for l in open(input_file).readlines()]
+
+    for line in input:
+
+        if not line or line.strip().startswith("#") or line.strip() == '':
+            continue
+
+        if line in ['training positive:', 'training negative:', 'evaluation positive:', 'evaluation negative:']:
+            reading_status = line
+            continue
+
+        if reading_status == 'training positive:':
+            nodes = [l.strip().upper() for l in line.replace('[','').replace(']','').replace('\'','').split(',') if l != ""]
+            trainingPositive.append(nodes)
+        elif reading_status == 'training negative:':
+            nodes = [l.strip().upper() for l in line.replace('[','').replace(']','').replace('\'','').split(',') if l != ""]
+            trainingNegative.append(nodes)
+        elif reading_status == 'evaluation positive:':
+            nodes = [l.strip().upper() for l in line.replace('[','').replace(']','').replace('\'','').split(',') if l != ""]
+            evaluationPositive.append(nodes)
+        elif reading_status == 'evaluation negative:':
+            nodes = [l.strip().upper() for l in line.replace('[','').replace(']','').replace('\'','').split(',') if l != ""]
+            evaluationNegative.append(nodes)
+
+    return trainingPositive, trainingNegative, evaluationPositive, evaluationNegative
 
 
 def clean_folder():

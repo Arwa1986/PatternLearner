@@ -21,7 +21,7 @@ class Evaluation:
 
         if s == -1:
             # print()
-            print(f'trace is not exist: {trace}')
+            # print(f'trace is not exist: {trace}')
             return False, ""
         else:
             # print(self.apta_obj.get_state_type(s))
@@ -59,30 +59,30 @@ class Evaluation:
                 true_negative_list.append(trace)
 
 
-        print(f'Traces that were accepted by original and learned automata')
-        print(f'true psitive ={true_positive}')
-        self.print_lst(true_positive_lsit)
-        print(f'Traces that were rejected by original but accepted by learned automata')
-        print(f'false positive = {false_positive}')
-        self.print_lst(false_positive_list)
-        print(f'Traces that were rejected by original and learned automata')
-        print(f'true negative = {true_negative}')
-        self.print_lst(true_negative_list)
-        print(f'Traces that were accepted by original but rejected learned automata')
-        print(f'false negative = {false_negative}')
-        self.print_lst(false_negative_list)
+        # print(f'Traces that were accepted by original and learned automata')
+        # print(f'true psitive ={true_positive}')
+        # self.print_lst(true_positive_lsit)
+        # print(f'Traces that were rejected by original but accepted by learned automata')
+        # print(f'false positive = {false_positive}')
+        # self.print_lst(false_positive_list)
+        # print(f'Traces that were rejected by original and learned automata')
+        # print(f'true negative = {true_negative}')
+        # self.print_lst(true_negative_list)
+        # print(f'Traces that were accepted by original but rejected learned automata')
+        # print(f'false negative = {false_negative}')
+        # self.print_lst(false_negative_list)
 
 
         precision = true_positive/(true_positive+false_positive)
         recall = true_positive/(true_positive+false_negative)
-        print(f'precision = {precision}')
-        print(f'recall = {recall}')
+        # print(f'precision = {precision}')
+        # print(f'recall = {recall}')
 
         F_measure = (2*precision*recall)/(precision+recall)
-        print(f'F_Measure = {F_measure}')
+        # print(f'F_Measure = {F_measure}')
 
         Accuracy = (true_positive + true_negative) / (len(self.positive_traces) + len(self.negative_traces))
-        print(f'Accuracy = {Accuracy}')
+        # print(f'Accuracy = {Accuracy}')
 
         # f = open("evaluation/evaluation.txt", "a")
         # f.write(f"{true_positive}\t{false_positive}\t"
@@ -90,7 +90,7 @@ class Evaluation:
         #         f"{F_measure}\n")
         # f.close()
 
-        return precision
+        return true_positive, true_negative, false_positive, false_negative, precision, recall, F_measure, Accuracy
 
     def print_lst(self, lst):
         for item in lst:

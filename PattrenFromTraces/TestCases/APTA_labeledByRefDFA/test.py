@@ -9,7 +9,7 @@ from PattrenFromTraces.APTA import APTA
 from PattrenFromTraces.matrix_reader import *
 def get_reference_DFA():
     # build_adjs_matrix('PosNegExamples.txt')
-    G, alphabet = read_matrix2('matrixOfRefrencedAuotmata.adjlist')
+    G, alphabet = buildGraphFromMatrix('matrixOfRefrencedAuotmata.adjlist')
     draw(G, "RefrencedAuotmata.png")
 
     apta_obj = APTA()

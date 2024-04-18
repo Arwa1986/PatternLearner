@@ -3,7 +3,7 @@ from PattrenFromTraces.matrix_reader import *
 from PattrenFromTraces.PatternsChecker import *
 
 def get_negative_patterns(apta_obj):
-    print(f'Negative Patterns in Refrenced DFA: ')
+    # print(f'Negative Patterns in Refrenced DFA: ')
     alphabet  = apta_obj.alphabet
     negative_patterns = []
     for char in alphabet:
@@ -20,8 +20,8 @@ def get_negative_patterns(apta_obj):
                 tp = TemporalProperty(event1, event2, 'Alternating')
                 negative_patterns.append(tp)
 
-    for tp in negative_patterns:
-        tp.print()
+    # for tp in negative_patterns:
+    #     tp.print()
 
     return negative_patterns
 
@@ -49,12 +49,12 @@ def has_negative_patterns(hypo_apta, negative_patterns, statesOfInterest):
     for tp in negative_patterns:
         if tp.pattern == 'Selfloop':
             if has_selfloop(hypo_apta, tp.event1):
-                tp.print()
+                # tp.print()
                 found_negative_patterns = True
                 # locations_neg_selfloop= get_negative_selfloop(hypo_apta, tp.event1)
         elif tp.pattern == 'Alternating':
             if has_Alternating(hypo_apta, tp.event1, tp.event2, statesOfInterest):
-                tp.print()
+                # tp.print()
                 found_negative_patterns= True
         # elif tp.pattern == 'Eventually':
         #     tp.print()

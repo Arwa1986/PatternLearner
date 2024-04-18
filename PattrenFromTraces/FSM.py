@@ -59,11 +59,11 @@ class FSM:
                     # merging_scour = self.compute_scour_with_negative_patterns(ds)
                     merging_scour = self.compute_scour(ds)
                     ds.merging_scour = merging_scour
-                    if merging_scour > -1 :
-                        mergable_states.append(ds)
+                    mergable_states.append(ds)
+                    if merging_scour > 0 :
                         # ds.printSets()
                         valid_for_at_least_one_red = True
-                        print(f'Valid merge: scour for {red} & {blue}: {merging_scour}')
+                        # print(f'Valid merge: scour for {red} & {blue}: {merging_scour}')
                     # else:
                     #     print(f'Valid but incorrect merge: scour for {red} & {blue}: {merging_scour}')
                 else:
@@ -81,10 +81,10 @@ class FSM:
             # for ds in mergable_states:
             #     ds.printInitialStatesAndScore()
             ds_with_highest_scour = self.pick_high_scour_pair(mergable_states)
-            print(f'{ds_with_highest_scour.s1} & {ds_with_highest_scour.s2} has the highest scour : {ds_with_highest_scour.merging_scour}')
-            print(f'____________________________________________________________')
+            # print(f'{ds_with_highest_scour.s1} & {ds_with_highest_scour.s2} has the highest scour : {ds_with_highest_scour.merging_scour}')
+            # print(f'____________________________________________________________')
             merge_sets(ds_with_highest_scour, self.apta)
-            self.draw()
+            # self.draw()
 
         self.update_red_states()
         self.run_EDSM_learner()
@@ -171,7 +171,7 @@ class FSM:
                 if self.apta.is_red(state):
                     statesOfInterest.append(state)
             if has_negative_patterns(self.apta, self.negative_patterns, statesOfInterest):
-                print(f'Valid but incorrect merge: scour for {ds.s1} & {ds.s2}: {ds.merging_scour}')
+                # print(f'Valid but incorrect merge: scour for {ds.s1} & {ds.s2}: {ds.merging_scour}')
                 merging_scour = -2
             self.apta = backup
 
@@ -222,6 +222,15 @@ class FSM:
         p = nx.drawing.nx_pydot.to_pydot(self.apta.G)
         p.write_png(f'output/figure{FSM.figure_num:02d}.png')
         FSM.figure_num+=1
+
+    def draw2(self, outputfile):
+        temp_color = self.apta.G.nodes[self.apta.root]['fillcolor']
+        self.apta.G.nodes[self.apta.root]['fillcolor'] = 'green'
+        p = nx.nx_agraph.pygraphviz_layout(self.apta.G, prog='dot')
+        p = nx.drawing.nx_pydot.to_pydot(self.apta.G)
+        p.write_png(f'output/{outputfile}.png')
+        FSM.figure_num+=1
+        self.apta.G.nodes[self.apta.root]['fillcolor'] = temp_color
 
     def compute_classes2(self,ds ,work_to_do):
         add_something_new = False

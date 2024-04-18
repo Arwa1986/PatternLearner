@@ -5,7 +5,7 @@ from PattrenFromTraces.negative_patterns2 import *
 if __name__ == '__main__':
     build_adjs_matrix('PosNegExamples.txt')
 
-    G, alphabet = read_matrix2('input/matrixOfRefrencedAuotmata.adjlist')
+    G, alphabet = buildGraphFromMatrix('input/matrixOfRefrencedAuotmata.adjlist')
     draw(G, "RefrencedAuotmata.png")
 
     Referenced_DFA = APTA()
@@ -18,7 +18,7 @@ if __name__ == '__main__':
 
 
     # HYPOTHESIS AUTOMATA
-    HG, Halphabet = read_matrix2('matrixOfHypoAuotmata.adjlist')
+    HG, Halphabet = buildGraphFromMatrix('matrixOfHypoAuotmata.adjlist')
     draw(HG, "HypoAuotmata.png")
 
     Hypo_DFA = APTA()

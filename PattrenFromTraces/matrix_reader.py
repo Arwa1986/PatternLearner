@@ -52,12 +52,14 @@ def read_matrix(fname):
     return G
 
 
-def read_matrix2(fname):
+def buildGraphFromMatrix(fname):
     # print('start')
     G = nx.MultiDiGraph()
     f = open(fname)
     alphabet = []
     for line in f.readlines():
+        if line == "training positive:\n":
+            break
         color = ''
         shape = 'oval'
         x = line.split()
@@ -90,13 +92,14 @@ def read_matrix2(fname):
     f.close()
     return G, alphabet
 
-def build_adjs_matrix(input_file):
+def build_adjs_matrix(input_file, counter):
     # open original file
     input = [l.strip().lower() for l in open(input_file).readlines()]
 
     # create file named "matrixOfRefrencedAuotmata.adjlist"
     # W: will overwirte any previous contents
-    f = open("input/matrixOfRefrencedAuotmata.adjlist", "w")
+    output_file = f'input/matrixOfRefrencedAuotmata{counter}.adjlist'
+    f = open(output_file, "w")
 
     for line in input:
         if not line or line.strip().startswith("#") or line.strip() == '':
@@ -105,10 +108,13 @@ def build_adjs_matrix(input_file):
             break
 
         list = [l.strip().upper() for l in line.replace(' - ',',').replace(' -> ',',').split(',') if l != ""]
-        row = list[0].split('<', 1)[0] + ' ' +list[2].split('<', 1)[0] + ' ' + list[1] +'\n'
+        # row = list[0].split('<', 1)[0] + ' ' +list[2].split('<', 1)[0] + ' ' + list[1] +'\n'
+        row = list[0] + ' ' + list[1] + ' ' + list[2] + '\n'
         f.write(row)
 
     f.close()
+
+    return output_file
 
 def draw(G, filename):
     p = nx.drawing.nx_pydot.to_pydot(G)
