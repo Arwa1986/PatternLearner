@@ -1,0 +1,8 @@
+A B a
+B C b
+C B a accepted
+A B a
+B B a accepted
+A B a
+B C b
+C D b accepted

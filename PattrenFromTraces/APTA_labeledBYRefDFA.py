@@ -4,7 +4,7 @@ import networkx as nx
 class APTA2:
     figure_num = 1
     def __init__(self, RefDFA):
-        self.RefDFA = RefDFA
+        self.RefDFA = RefDFA #RefDFA is APTA object
         self.G = nx.MultiDiGraph()
         self.id = 0
         self.frm = 0

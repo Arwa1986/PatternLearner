@@ -32,7 +32,7 @@ if __name__ == '__main__':
         # save result
 
     clean_folder()
-    input_folder = "input"
+    input_folder = "input-10states"
     counter = 1
     # inputfile = "input/PosNegExamples.txt"
 
@@ -56,7 +56,7 @@ if __name__ == '__main__':
             [len(traningPosExmp), len(trainingNegExmp), len(evalPosExmp), len(evalNegExamp), true_positive,
              true_negative,
              false_positive, false_negative, precision, recall, F_measure, Accuracy]]
-        file_path = 'data.csv'
+        file_path = 'NegPat10StatesData.csv'
         # Write data to CSV file
         with open(file_path, mode='a', newline='') as file:
             writer = csv.writer(file)

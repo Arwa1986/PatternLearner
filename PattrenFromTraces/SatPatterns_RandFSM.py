@@ -1,5 +1,5 @@
 import random
-from TemporalPeoperty import TemporalProperty
+from PattrenFromTraces.TemporalPeoperty import TemporalProperty
 
 properties = []
 

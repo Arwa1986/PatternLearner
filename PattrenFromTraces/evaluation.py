@@ -1,7 +1,7 @@
 import copy
 from random import random
 
-from FSM import FSM
+from PattrenFromTraces.FSM import FSM
 
 class Evaluation:
     def __init__(self, fsm:FSM, accepted_traces, rejected_traces):

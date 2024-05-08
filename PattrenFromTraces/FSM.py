@@ -1,10 +1,10 @@
-import copy
-import random
-from DISJOINTSETS import DisjointSet
-import networkx as nx
-from APTA import APTA
+# import copy
+# import random
+from PattrenFromTraces.DISJOINTSETS import DisjointSet
+# import networkx as nx
+# from APTA import APTA
 from PattrenFromTraces.Merger import *
-from PattrenFromTraces.PatternsChecker import *
+# from PattrenFromTraces.PatternsChecker import *
 from PattrenFromTraces.negative_patterns2 import *
 
 class FSM:
