@@ -19,6 +19,8 @@ class TemporalProperty:
             pattern_length = 1
         elif self.pattern == 'Alternating':
             pattern_length = 2
+        elif self.pattern == 'Next':
+            pattern_length = 2
         elif self.pattern == 'Eventually':
             pattern_length = 3
 

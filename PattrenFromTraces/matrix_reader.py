@@ -115,6 +115,19 @@ def build_adjs_matrix(input_file, counter):
     f.close()
 
     return output_file
+def graph_to_string(graph):
+    # create file named "matrixOfRefrencedAuotmata.adjlist"
+    # W: will overwirte any previous contents
+    f = open("input/LearnedAuotmata_string.txt", "w")
+
+    for state in graph.nodes:
+        out_edges = graph.out_edges(state, keys=True)
+        for edge in out_edges:
+            lbl = graph.get_edge_data(edge[0], edge[1], edge[2])["label"]
+            row = f'{edge[0]}-{lbl}->{edge[1]}\n'
+            f.write(row)
+
+    f.close()
 
 def draw(G, filename):
     p = nx.drawing.nx_pydot.to_pydot(G)

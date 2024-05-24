@@ -20,6 +20,10 @@ class FSM:
         self.visited=[]
         self.blue_states=[]
 
+        self.selfloppPat_rejectedCount=0
+        self.alternatingPat_rejectedCount=0
+        self.nextPat_rejectedCount=0
+
         self.negative_patterns = get_negative_patterns(reference_DFA)
     def run_EDSM_learner(self):
         if self.apta.is_all_states_red():
@@ -30,7 +34,7 @@ class FSM:
         self.visited = []
         self.pick_next_blue2(self.apta.root)
         # print(f'BLUE_STATES: {self.blue_states}')
-        # self.draw()
+        self.draw()
         # mergable_states is  a list contains all pairs of state that are valid to be merged with their merging scour
         mergable_states=[]
         valid_for_at_least_one_red = False
@@ -64,11 +68,15 @@ class FSM:
                         # ds.printSets()
                         valid_for_at_least_one_red = True
                         # print(f'Valid merge: scour for {red} & {blue}: {merging_scour}')
-                    # else:
-                    #     print(f'Valid but incorrect merge: scour for {red} & {blue}: {merging_scour}')
+                    # elif merging_scour == 0:
+                    #     print(f'Valid but no evidence: scour for {red} & {blue}: {merging_scour}')
                 else:
                     ds.merging_scour = -1
                     # print(f'InValid merge: scour for {red} & {blue}: {ds.merging_scour}')
+
+        # for ds_item in mergable_states:
+        #     print(
+        #         f'Other pairs: [{ds_item.s1}({self.apta.get_state_reference_label(ds_item.s1)}), {ds_item.s2}({self.apta.get_state_reference_label(ds_item.s2)}), {ds_item.merging_scour}]')
 
         if not valid_for_at_least_one_red:
             # the blue_state can't be merged with any red_state
@@ -83,7 +91,10 @@ class FSM:
             ds_with_highest_scour = self.pick_high_scour_pair(mergable_states)
             # print(f'{ds_with_highest_scour.s1} & {ds_with_highest_scour.s2} has the highest scour : {ds_with_highest_scour.merging_scour}')
             # print(f'____________________________________________________________')
+            # self.print_pair_label(ds_with_highest_scour,mergable_states, self.apta)
+            # print(f'____________________________________________________________')
             merge_sets(ds_with_highest_scour, self.apta)
+
             # self.draw()
 
         self.update_red_states()
@@ -170,10 +181,15 @@ class FSM:
             for state in self.apta.G.nodes:
                 if self.apta.is_red(state):
                     statesOfInterest.append(state)
-            if has_negative_patterns(self.apta, self.negative_patterns, statesOfInterest):
+            has_negPat, selfloopCount, alternatingCount, nextCounter = has_negative_patterns(self.apta, self.negative_patterns, statesOfInterest)
+            if has_negPat:
                 # print(f'Valid but incorrect merge: scour for {ds.s1} & {ds.s2}: {ds.merging_scour}')
                 merging_scour = -2
             self.apta = backup
+
+            self.selfloppPat_rejectedCount+=selfloopCount
+            self.alternatingPat_rejectedCount+=alternatingCount
+            self.nextPat_rejectedCount+=nextCounter
 
         return merging_scour
 
@@ -268,3 +284,28 @@ class FSM:
             for out_trans in s_out_trans:
                out_transitions.append(out_trans)
         return out_transitions
+
+    def print_pair_label(self, ds, mergeable_pairs, apta):
+
+        # check if the states have different labels (incorrect merge)
+        # this only works with labeled APTA (APTA where states have the same label as the reference automata)
+        if (apta.get_state_reference_label(ds.s1) != apta.get_state_reference_label(ds.s2)):
+            print(f'Incorrect merge:[{ds.s1}({apta.get_state_reference_label(ds.s1)}), {ds.s2}({apta.get_state_reference_label(ds.s2)}), {ds.merging_scour}]')
+        else:
+            print(f'Correct merge: [{ds.s1}({apta.get_state_reference_label(ds.s1)}), {ds.s2}({apta.get_state_reference_label(ds.s2)}), {ds.merging_scour}]')
+
+        # sets = ds.get_sets()
+        # for set in sets.items():
+        #     target, merge_list = set
+        #     if len(merge_list) > 1:
+        #         # check if the states have different labels (incorrect merge)
+        #         # this only works with labeled APTA (APTA where states have the same label as the reference automata)
+        #         target_label = apta.get_state_reference_label(target)
+        #         if any(apta.get_state_reference_label(state) != target_label for state in merge_list):
+        #             print(f'Incorrect merge:{merge_list}')
+        #             for ds_item in mergeable_pairs:
+        #                 print(f'All pairs: [{ds_item.s1}({apta.get_state_reference_label(ds_item.s1)}), {ds_item.s2}({apta.get_state_reference_label(ds_item.s2)}), {ds_item.merging_scour}]')
+        #         else:
+        #             print(f'Correct merge: {merge_list}')
+        #         for s in merge_list:
+        #             print(f'-->[{apta.get_state_reference_label(s)}]')

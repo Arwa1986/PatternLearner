@@ -1,7 +1,8 @@
+from copy import copy
 from typing import List
 import networkx as nx
 
-class APTA2:
+class LabeledAPTA:
     figure_num = 1
     def __init__(self, RefDFA):
         self.RefDFA = RefDFA #RefDFA is APTA object
@@ -79,7 +80,7 @@ class APTA2:
                 self.frm = x
                 x = self.get_successor(x, trace[i])
                 if x!=-1:
-                    currentStateRefDFA=self.G.nodes[x]['label']
+                    currentStateRefDFA=self.G.nodes[x]['reference_lbl']
                 if i==len(trace)-1:
                     self.set_state_type(x,type)
                 lable_count =i
@@ -110,20 +111,31 @@ class APTA2:
         else:
             return -1
 
-    def add_state(self, lbl, type="unlabeled"):
+    def add_state(self,lbl, type="accepted"):
         # create a new state with new id and add it to the graph
         if type == "accepted":
-            self.G.add_node(self.id, label=lbl, type=type, style='filled', fillcolor='gray', shape='doublecircle')
-            # self.accepted_nodes[self.id] = self.id
+            self.G.add_node(self.id, label=self.id, reference_lbl = lbl, type=type, style='filled', fillcolor='gray', shape='doublecircle')
         elif type == "rejected":
-            self.G.add_node(self.id, label=lbl, type=type, style='filled', fillcolor='gray', shape='square')
-            # self.rejected_nodes[self.id] = self.id
-        else:
-            self.G.add_node(self.id, label=lbl, type=type, style='filled', fillcolor='gray')
+            self.G.add_node(self.id, label=self.id, reference_lbl = lbl, type=type, style='filled', fillcolor='gray', shape='square')
 
         # increase id for the next state
         self.id = self.id + 1
-        return self.id -1
+        return self.id - 1
+
+    # def add_state(self, lbl, type="unlabeled"):
+    #     # create a new state with new id and add it to the graph
+    #     if type == "accepted":
+    #         self.G.add_node(self.id, label=lbl, type=type, style='filled', fillcolor='gray', shape='doublecircle')
+    #         # self.accepted_nodes[self.id] = self.id
+    #     elif type == "rejected":
+    #         self.G.add_node(self.id, label=lbl, type=type, style='filled', fillcolor='gray', shape='square')
+    #         # self.rejected_nodes[self.id] = self.id
+    #     else:
+    #         self.G.add_node(self.id, label=lbl, type=type, style='filled', fillcolor='gray')
+    #
+    #     # increase id for the next state
+    #     self.id = self.id + 1
+    #     return self.id -1
 
     def get_state_type(self, s):
         if s in self.G:
@@ -155,6 +167,15 @@ class APTA2:
 
     def build_APTA(self, positive_traces, negative_traces):#, constrains):
         # self.max_loop_iterators = constrains
+        for t in positive_traces:
+            self.add_trace(t, "accepted")
+
+        for t in negative_traces:
+            self.add_trace(t, "rejected")
+        return self.G
+
+    def build_APTA_labeled(self, Reference_DFA, positive_traces, negative_traces):#, constrains):
+
         for t in positive_traces:
             self.add_trace(t, "accepted")
 
@@ -280,8 +301,7 @@ class APTA2:
         self.G.remove_nodes_from(leaf_nodes)
 
     def draw_multiDigraph(self):
-        # p = nx.drawing.nx_pydot.to_pydot(fsm.AG.G)
         p = nx.nx_agraph.pygraphviz_layout(self.G, prog='dot')
         p = nx.drawing.nx_pydot.to_pydot(self.G)
-        p.write_png(f'figure{APTA2.figure_num:02d}.png')
-        APTA2.figure_num+=1
+        p.write_png(f'figure{LabeledAPTA.figure_num:02d}.png')
+        LabeledAPTA.figure_num+=1

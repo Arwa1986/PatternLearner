@@ -1,0 +1,10 @@
+V0 V1 a
+V1 V2 b
+V2 V0 a
+training positive:
+['a', 'b', 'a']
+['a', 'c']
+training negative:
+['b']
+evaluation positive:
+evaluation negative:

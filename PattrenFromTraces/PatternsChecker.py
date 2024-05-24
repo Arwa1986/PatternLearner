@@ -35,6 +35,15 @@ def has_Alternating(apta:APTA, event1, event2, statesOfInterest):
             if event1_edge[0] == event2_edge[1] and event1_edge[1] == event2_edge[0]:
                 found=True
     return found
+
+def has_next(apta_obj:APTA, event1, event2, statesOfInterest):
+    found=True
+    states_with_incoming_label=get_states_with_incoming_label(apta_obj.G, event1, statesOfInterest)
+    for state in states_with_incoming_label:
+        if not has_outgoing_transition_with_label(apta_obj.G, state, event2):
+            found = False
+    return found
+
 def get_negative_alternating(DFA, event1, event2):
     alternating_pairs=[]
     all_event1_edges = get_edges_with_label(DFA.G, event1)
@@ -48,6 +57,16 @@ def get_negative_alternating(DFA, event1, event2):
 
     return alternating_pairs
 
+def get_states_with_incoming_label(graph, label, statesOfInterest):
+    if statesOfInterest:
+        states_with_label = {v for u, v, data in graph.edges(data=True) if data.get('label') == label and v in statesOfInterest}
+    else:
+        states_with_label = {v for u, v, data in graph.edges(data=True) if data.get('label') == label}
+    return states_with_label
+
+# Function to check if a state has an outgoing transition with a specific label
+def has_outgoing_transition_with_label(graph, state, label):
+    return any(data.get('label') == label for _, _, data in graph.out_edges(state, data=True))
 
 def get_edges_with_label(graph, label):
     edges = [edge for edge in graph.edges(data=True) if edge[2].get('label') == label]

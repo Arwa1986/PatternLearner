@@ -20,10 +20,21 @@ def get_negative_patterns(apta_obj):
                 tp = TemporalProperty(event1, event2, 'Alternating')
                 negative_patterns.append(tp)
 
+    for i in range(len(alphabet)):
+        for j in range(i + 1, len(alphabet)):
+            event1 = alphabet[i]
+            event2 = alphabet[j]
+            if not has_next(apta_obj, event1, event2, []):
+                tp = TemporalProperty(event1, event2, 'Next')
+                negative_patterns.append(tp)
+
+
     # for tp in negative_patterns:
     #     tp.print()
 
     return negative_patterns
+
+
 
 def get_score_for_negative_patterns_in_hypo_automta(hypo_apta, negative_patterns):
     print(f'Negative Patterns found in Hypothesis DFA: ')
@@ -46,19 +57,26 @@ def get_score_for_negative_patterns_in_hypo_automta(hypo_apta, negative_patterns
 def has_negative_patterns(hypo_apta, negative_patterns, statesOfInterest):
     # print(f'Negative Patterns found in Hypothesis DFA: ')
     found_negative_patterns=False
+    selfloopCount=0
+    alternatingCount=0
+    nextCount=0
     for tp in negative_patterns:
         if tp.pattern == 'Selfloop':
             if has_selfloop(hypo_apta, tp.event1):
                 # tp.print()
                 found_negative_patterns = True
+                selfloopCount+=1
                 # locations_neg_selfloop= get_negative_selfloop(hypo_apta, tp.event1)
         elif tp.pattern == 'Alternating':
             if has_Alternating(hypo_apta, tp.event1, tp.event2, statesOfInterest):
                 # tp.print()
                 found_negative_patterns= True
-        # elif tp.pattern == 'Eventually':
-        #     tp.print()
-        #     score -= 3
-    return found_negative_patterns
+                alternatingCount+=1
+        elif tp.pattern == 'Next':
+            if has_next(hypo_apta, tp.event1, tp.event2, statesOfInterest):
+                #tp.print()
+                found_negative_patterns= True
+                nextCount+=1
+    return found_negative_patterns,selfloopCount,alternatingCount,nextCount
 if __name__ == '__main__':
     pass

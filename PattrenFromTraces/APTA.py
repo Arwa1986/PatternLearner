@@ -1,8 +1,5 @@
 from typing import List
 import networkx as nx
-# import matplotlib.pyplot as plt
-# from IPython.display import Image
-# from path import PATH
 
 class APTA:
     figure_num = 1
@@ -121,6 +118,12 @@ class APTA:
     def get_state_type(self, s):
         if s in self.G:
             return self.G.nodes[s]["type"]
+        else:
+            return ""
+
+    def get_state_reference_label(self, s):
+        if s in self.G:
+            return self.G.nodes[s]["reference_lbl"]
         else:
             return ""
 
