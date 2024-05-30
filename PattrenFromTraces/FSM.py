@@ -34,7 +34,7 @@ class FSM:
         self.visited = []
         self.pick_next_blue2(self.apta.root)
         # print(f'BLUE_STATES: {self.blue_states}')
-        self.draw()
+        # self.draw()
         # mergable_states is  a list contains all pairs of state that are valid to be merged with their merging scour
         mergable_states=[]
         valid_for_at_least_one_red = False
@@ -89,8 +89,6 @@ class FSM:
             # for ds in mergable_states:
             #     ds.printInitialStatesAndScore()
             ds_with_highest_scour = self.pick_high_scour_pair(mergable_states)
-            # print(f'{ds_with_highest_scour.s1} & {ds_with_highest_scour.s2} has the highest scour : {ds_with_highest_scour.merging_scour}')
-            # print(f'____________________________________________________________')
             # self.print_pair_label(ds_with_highest_scour,mergable_states, self.apta)
             # print(f'____________________________________________________________')
             merge_sets(ds_with_highest_scour, self.apta)
@@ -173,6 +171,7 @@ class FSM:
             if len(elements) > 1:
                 # statesOfInterest.append(representative)
                 merging_scour += (len(elements) - 1)
+        ds.merging_scour = merging_scour
         if merging_scour > -1:
             backup = copy.deepcopy(self.apta)
             merge_sets(ds, self.apta)

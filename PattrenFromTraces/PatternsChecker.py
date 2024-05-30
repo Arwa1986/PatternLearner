@@ -8,6 +8,7 @@ def has_selfloop(apta, label):
     for sl in selfloops:
         if sl[-1] == label:
             found = True
+            break
         else:
             found =  False
     return found
@@ -32,7 +33,7 @@ def has_Alternating(apta:APTA, event1, event2, statesOfInterest):
         for event2_edge in all_event2_edges:
             #if event1's source is the target for event2
             # and event1#s target is the source of event2
-            if event1_edge[0] == event2_edge[1] and event1_edge[1] == event2_edge[0]:
+            if event1_edge[0] == event2_edge[1] and event1_edge[1] == event2_edge[0] and event1_edge[0]!= event1_edge[1]:
                 found=True
     return found
 
@@ -42,6 +43,15 @@ def has_next(apta_obj:APTA, event1, event2, statesOfInterest):
     for state in states_with_incoming_label:
         if not has_outgoing_transition_with_label(apta_obj.G, state, event2):
             found = False
+    return found
+
+def not_followed_by(apta_obj:APTA, event1, event2, statesOfInterest):
+    found = True
+    states_with_incoming_label = get_states_with_incoming_label(apta_obj.G, event1, statesOfInterest)
+    for state in states_with_incoming_label:
+        if has_outgoing_transition_with_label(apta_obj.G, state, event2):
+            found = False
+            break
     return found
 
 def get_negative_alternating(DFA, event1, event2):

@@ -18,32 +18,32 @@ def get_reference_DFA(input_file, counter):
     apta_obj.alphabet = alphabet
     return apta_obj
 
-# if __name__ == '__main__':
-#         clean_folder()
-#         input_file_path='input10States400traces/automata96.txt'
-#         reference_DFA = get_reference_DFA(input_file_path, 1)
-#         traningPosExmp, trainingNegExmp, evalPosExmp, evalNegExamp = GetTrainingEvaluationData(input_file_path)
-#         LabeledAPTA = LabeledAPTA(reference_DFA)
-#         LabeledAPTA.build_APTA(traningPosExmp, trainingNegExmp)
-#         LabeledAPTA.draw_multiDigraph()
-#
-#         apta = APTA()
-#         apta.G = LabeledAPTA.G
-#         apta.root = 0
-#         apta.alphabet = LabeledAPTA.alphabet
-#
-#         fsm = FSM(apta, [], 0, reference_DFA)
-#         fsm.run_EDSM_learner()
-#         fsm.draw()
-#         print(f'number of rejected selfloop patterns: {fsm.selfloppPat_rejectedCount}')
-#         print(f'number of rejected alternating patterns: {fsm.alternatingPat_rejectedCount}')
-#         print(f'number of rejected next patterns: {fsm.nextPat_rejectedCount}')
-#
-#         eval = Evaluation(fsm, evalPosExmp, evalNegExamp)
-#         true_positive, true_negative, false_positive, false_negative, precision, recall, F_measure, Accuracy= eval.evaluate()
-#         print(f'F_measure= {F_measure}')
-
 if __name__ == '__main__':
+        # clean_folder()
+        # input_file_path='input-10states/automata69.txt'
+        # reference_DFA = get_reference_DFA(input_file_path, 1)
+        # traningPosExmp, trainingNegExmp, evalPosExmp, evalNegExamp = GetTrainingEvaluationData(input_file_path)
+        # LabeledAPTA = LabeledAPTA(reference_DFA)
+        # LabeledAPTA.build_APTA(traningPosExmp, trainingNegExmp)
+        # LabeledAPTA.draw_multiDigraph()
+        #
+        # apta = APTA()
+        # apta.G = LabeledAPTA.G
+        # apta.root = 0
+        # apta.alphabet = LabeledAPTA.alphabet
+        #
+        # fsm = FSM(apta, [], 0, reference_DFA)
+        # fsm.run_EDSM_learner()
+        # fsm.draw()
+        # print(f'number of rejected selfloop patterns: {fsm.selfloppPat_rejectedCount}')
+        # print(f'number of rejected alternating patterns: {fsm.alternatingPat_rejectedCount}')
+        # print(f'number of rejected next patterns: {fsm.nextPat_rejectedCount}')
+        #
+        # eval = Evaluation(fsm, evalPosExmp, evalNegExamp)
+        # true_positive, true_negative, false_positive, false_negative, precision, recall, specificity, F_measure, BCR, Accuracy= eval.evaluate()
+        # print(f'F_measure (2 patterns)= {F_measure}')
+
+# if __name__ == '__main__':
 #     clean_folder()
 #     input_file_path='input-10states/automata74.txt'
 #     reference_DFA = get_reference_DFA(input_file_path, 1)
@@ -76,10 +76,13 @@ if __name__ == '__main__':
         # save result
 
     clean_folder()
-    input_folder = "input-10states400traces"
+    input_folder = "input-10states"
     counter = 1
     # inputfile = "input/PosNegExamples.txt"
 
+    selfloppPat_rejectedCount=0
+    alternatingPat_rejectedCount=0
+    nextPat_rejectedCount=0
     for file_name in os.listdir(input_folder):
         input_file_path = os.path.join(input_folder, file_name)
 
@@ -94,19 +97,26 @@ if __name__ == '__main__':
         # fsm.draw2(f'automata{counter}')
 
         eval = Evaluation(fsm, evalPosExmp, evalNegExamp)
-        true_positive, true_negative, false_positive, false_negative, precision, recall, F_measure, Accuracy = eval.evaluate()
+        true_positive, true_negative, false_positive, false_negative, precision, recall, specificity, F_measure, BCR, Accuracy = eval.evaluate()
 
         data = [
-            [file_name, len(traningPosExmp), len(trainingNegExmp), len(evalPosExmp), len(evalNegExamp), true_positive,
-             true_negative,
-             false_positive, false_negative, precision, recall, F_measure, Accuracy]]
-        file_path = 'NegPat10States400trace3NegPat.csv'
+            [file_name, len(traningPosExmp), len(trainingNegExmp), len(evalPosExmp), len(evalNegExamp),
+             true_positive, true_negative, false_positive, false_negative, precision, recall, specificity,
+             F_measure,BCR, Accuracy]]
+        file_path = 'NegPat10States200trace3NegPat.csv'
         # Write data to CSV file
         with open(file_path, mode='a', newline='') as file:
             writer = csv.writer(file)
             writer.writerows(data)
         print(f'Automata{counter}')
         counter += 1
+
+        selfloppPat_rejectedCount+=fsm.selfloppPat_rejectedCount
+        alternatingPat_rejectedCount+=fsm.alternatingPat_rejectedCount
+        nextPat_rejectedCount+=fsm.nextPat_rejectedCount
+    print(f'number of rejected selfloop patterns: {selfloppPat_rejectedCount}')
+    print(f'number of rejected alternating patterns: {alternatingPat_rejectedCount}')
+    print(f'number of rejected next patterns: {nextPat_rejectedCount}')
 
     # building the tree
     # apta = APTA()

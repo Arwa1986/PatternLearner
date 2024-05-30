@@ -58,39 +58,28 @@ class Evaluation:
                 true_negative += 1
                 true_negative_list.append(trace)
 
+        if (true_positive+false_positive) == 0:
+            precision = 0
+        else:
+            precision = true_positive/(true_positive+false_positive)
 
-        # print(f'Traces that were accepted by original and learned automata')
-        # print(f'true psitive ={true_positive}')
-        # self.print_lst(true_positive_lsit)
-        # print(f'Traces that were rejected by original but accepted by learned automata')
-        # print(f'false positive = {false_positive}')
-        # self.print_lst(false_positive_list)
-        # print(f'Traces that were rejected by original and learned automata')
-        # print(f'true negative = {true_negative}')
-        # self.print_lst(true_negative_list)
-        # print(f'Traces that were accepted by original but rejected learned automata')
-        # print(f'false negative = {false_negative}')
-        # self.print_lst(false_negative_list)
+        if (true_positive+false_negative) == 0:
+            recall =0
+        else:
+            recall = true_positive/(true_positive+false_negative)
+
+        if (true_negative+false_positive) == 0:
+            specificity = 0
+        else:
+            specificity =true_negative/(true_negative+false_positive)
+
+        F_measure = round((2*precision*recall)/(precision+recall),1)
+        BCR = round(0.5 * (recall + specificity), 1)
+        Accuracy = round((true_positive + true_negative) / (len(self.positive_traces) + len(self.negative_traces)),1)
 
 
-        precision = true_positive/(true_positive+false_positive)
-        recall = true_positive/(true_positive+false_negative)
-        # print(f'precision = {precision}')
-        # print(f'recall = {recall}')
 
-        F_measure = (2*precision*recall)/(precision+recall)
-        # print(f'F_Measure = {F_measure}')
-
-        Accuracy = (true_positive + true_negative) / (len(self.positive_traces) + len(self.negative_traces))
-        # print(f'Accuracy = {Accuracy}')
-
-        # f = open("evaluation/evaluation.txt", "a")
-        # f.write(f"{true_positive}\t{false_positive}\t"
-        #         f"{true_negative}\t{false_negative}\t{precision}\t{recall}\t"
-        #         f"{F_measure}\n")
-        # f.close()
-
-        return true_positive, true_negative, false_positive, false_negative, precision, recall, F_measure, Accuracy
+        return true_positive, true_negative, false_positive, false_negative, precision, recall, specificity, F_measure, BCR, Accuracy
 
     def print_lst(self, lst):
         for item in lst:
